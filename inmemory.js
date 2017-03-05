@@ -1,3 +1,5 @@
+var objectPath = require('object-path')
+
 module.exports = function (state) {
   state = state || {}
   return {
@@ -9,11 +11,11 @@ module.exports = function (state) {
     write: function (key, data, cb) {
       if (Buffer.isBuffer(key)) key = key.toString('hex')
       if (Buffer.isBuffer(data)) data = data.toString('hex')
-      state[key] = data || null
+      objectPath.set(state, key, data || null)
       process.nextTick(cb)
     },
     delete: function (key, cb) {
-      delete state[key]
+      objectPath.del(state, key)
       process.nextTick(cb)
     }
   }
