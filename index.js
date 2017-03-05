@@ -1,6 +1,7 @@
 var low = require('last-one-wins')
 var fs = require('fs')
 var debug = require('debug')('toiletdb')
+var objectPath = require('object-path')
 
 module.exports = function (filename) {
   // in memory copy of latest state that functions below mutate
@@ -51,12 +52,13 @@ module.exports = function (filename) {
       if (Buffer.isBuffer(key)) key = key.toString('hex')
       if (Buffer.isBuffer(data)) data = data.toString('hex')
       // the '|| null' is because JSON.stringify deletes keys with `undefined` values
-      state[key] = data || null
+
+      objectPath.set(state, key, data || null)
       write(state, cb)
     },
     delete: function (key, cb) {
       if (Buffer.isBuffer(key)) key = key.toString('hex')
-      delete state[key]
+      objectPath.del(state, key)
       write(state, cb)
     }
   }
